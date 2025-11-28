@@ -1,0 +1,115 @@
+import React from "react";
+
+const Cart = ({ showCart, setShowCart, cartItems = [], updateQuantity, removeItem, setCurrentPage }) => {
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const tax = subtotal * 0.1;
+  const shipping = cartItems.length > 0 ? 5 : 0;
+  const total = subtotal + tax + shipping;
+
+  return (
+    <>
+      {showCart && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end">
+          <div className="w-full md:w-96 bg-[#0a1a12] border-l-2 border-green-600 rounded-t-3xl p-6 max-h-screen overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold text-green-400">🛒 Shopping Cart</h2>
+              <button onClick={() => setShowCart(false)} className="text-3xl text-gray-400 hover:text-white">
+                ✕
+              </button>
+            </div>
+
+            {cartItems.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-5xl mb-4">📭</p>
+                <p className="text-gray-400 text-lg">Your cart is empty</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4 mb-6">
+                  {cartItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-green-900/20 border border-green-700 p-4 rounded-lg flex justify-between items-center"
+                    >
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="text-4xl">{item.emoji}</div>
+                        <div className="flex-1">
+                          <h3 className="font-bold">{item.name}</h3>
+                          <p className="text-green-400">${item.price}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="px-2 py-1 bg-red-600 hover:bg-red-500 rounded text-white font-bold"
+                        >
+                          −
+                        </button>
+                        <span className="px-3 font-bold">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="px-2 py-1 bg-green-600 hover:bg-green-500 rounded text-white font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="ml-2 text-red-500 hover:text-red-400 text-xl"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pricing Summary */}
+                <div className="border-t border-green-700 pt-4 space-y-2">
+                  <div className="flex justify-between text-gray-300">
+                    <span>Subtotal:</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-300">
+                    <span>Tax (10%):</span>
+                    <span>${tax.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-300">
+                    <span>Shipping:</span>
+                    <span>${shipping.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-green-400 text-xl font-bold border-t border-green-700 pt-2">
+                    <span>Total:</span>
+                    <span>${total.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Checkout Buttons */}
+                <div className="mt-6 space-y-2">
+                  <button
+                    onClick={() => {
+                      setShowCart(false);
+                      setCurrentPage?.("checkout");
+                    }}
+                    className="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition transform hover:scale-105"
+                  >
+                    💳 Proceed to Checkout
+                  </button>
+                  <button
+                    onClick={() => setShowCart(false)}
+                    className="w-full py-3 border border-green-600 hover:bg-green-600/10 text-white font-bold rounded-lg transition"
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default Cart;
